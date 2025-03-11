@@ -8,6 +8,7 @@ import numpy as np
 
 from threading import Thread, Lock
 
+
 class LeapHand:
     def __init__(self, hand_type:str):
         self.hand_type = hand_type # 'left' or 'right'
@@ -20,7 +21,101 @@ class LeapHand:
         self._ring_pos: list = [np.zeros(3)] * 5
         self._little_pos: list = [np.zeros(3)] * 5
 
-        self._joint_pos = [self._thumb_pos, self._index_pos, self._middle_pos, self._ring_pos, self._little_pos]
+    def update_states(self, thumb_pos, index_pos, middle_pos, ring_pos, little_pos):
+        for i in range(4):
+            self._thumb_pos[i] = thumb_pos[i]
+        for i in range(5):
+            self._index_pos[i] = index_pos[i]
+        for i in range(5):
+            self._middle_pos[i] = middle_pos[i]
+        for i in range(5):
+            self._ring_pos[i] = ring_pos[i]
+        for i in range(5):
+            self._little_pos[i] = little_pos[i]
+
+    def get_all_states(self):
+        thumb_pos = self.thumb_pos
+        index_pos = self.index_pos
+        middle_pos = self.middle_pos
+        ring_pos = self.ring_pos
+        little_pos = self.little_pos
+
+        thumb_joint = self.get_thumb_joint()
+        index_joint = self.get_index_joint()
+        middle_joint = self.get_middle_joint()
+        ring_joint = self.get_ring_joint()
+        little_joint = self.get_little_joint()
+
+    def get_palm_norm(self):
+        palm_joint = np.array([self.thumb_pos[0], self.index_pos[0], self.middle_pos[0], self.ring_pos[0], self.little_pos[0],
+                               self.little_pos[1], self.ring_pos[1], self.middle_pos[1], self.index_pos[1]]) * 0.001
+
+        if self.exist:
+            palm_norm = np.linalg.solve(palm_joint.T @ palm_joint, palm_joint.T @ np.ones([9, 1]))
+            palm_norm = palm_norm / np.linalg.norm(palm_norm)
+        else:
+            palm_norm = np.zeros(3)
+
+        return palm_norm
+
+    def get_thumb_joint(self) -> np.ndarray:
+        thumb_joint: list = [0.0] * 4
+
+        vec1 = self.thumb_pos[1] - self.thumb_pos[0]
+        vec2 = self.index_pos[1] - self.index_pos[0]
+        thumb_joint[0] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+
+        vec1 = self.get_palm_norm()
+        vec2 = self.thumb_pos[1] - self.thumb_pos[0]
+        thumb_joint[1] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+
+        joint_pos = self.thumb_pos
+        for joint_idx in range(len(joint_pos) - 2):
+            vec1 = joint_pos[joint_idx + 1] - joint_pos[joint_idx + 0]
+            vec2 = joint_pos[joint_idx + 2] - joint_pos[joint_idx + 1]
+
+            thumb_joint[joint_idx+2] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        return np.array(thumb_joint)
+
+    def get_index_joint(self) -> np.ndarray:
+        index_joint: list = [0.0] * 3
+        joint_pos = self.index_pos
+        for joint_idx in range(len(joint_pos) - 2):
+            vec1 = joint_pos[joint_idx + 1] - joint_pos[joint_idx + 0]
+            vec2 = joint_pos[joint_idx + 2] - joint_pos[joint_idx + 1]
+
+            index_joint[joint_idx] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        return np.array(index_joint)
+
+    def get_middle_joint(self) -> np.ndarray:
+        middle_joint: list = [0.0] * 3
+        joint_pos = self.middle_pos
+        for joint_idx in range(len(joint_pos) - 2):
+            vec1 = joint_pos[joint_idx + 1] - joint_pos[joint_idx + 0]
+            vec2 = joint_pos[joint_idx + 2] - joint_pos[joint_idx + 1]
+
+            middle_joint[joint_idx] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        return np.array(middle_joint)
+
+    def get_ring_joint(self) -> np.ndarray:
+        ring_joint: list = [0.0] * 3
+        joint_pos = self.ring_pos
+        for joint_idx in range(len(joint_pos) - 2):
+            vec1 = joint_pos[joint_idx + 1] - joint_pos[joint_idx + 0]
+            vec2 = joint_pos[joint_idx + 2] - joint_pos[joint_idx + 1]
+
+            ring_joint[joint_idx] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        return np.array(ring_joint)
+
+    def get_little_joint(self) -> np.ndarray:
+        little_joint: list = [0.0] * 3
+        joint_pos = self.little_pos
+        for joint_idx in range(len(joint_pos) - 2):
+            vec1 = joint_pos[joint_idx + 1] - joint_pos[joint_idx + 0]
+            vec2 = joint_pos[joint_idx + 2] - joint_pos[joint_idx + 1]
+
+            little_joint[joint_idx] = np.arccos(np.sum(vec1 * vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        return np.array(little_joint)
 
     @property
     def thumb_pos(self) -> np.ndarray:
@@ -41,6 +136,7 @@ class LeapHand:
     @property
     def little_pos(self) -> np.ndarray:
         return np.array(self._little_pos) * 10
+
 
 class LeapData:
     def __init__(self):
@@ -68,24 +164,30 @@ class LeapData:
 
             # thumb
             digit = hand.digits[0]
+            thumb_pos = []
             for joint_idx, bone_idx in enumerate(range(1, 4)): # There are no useful information in metacarpal of thumb
                 bone = digit.bones[bone_idx]
                 prev_joint = bone.prev_joint
-                target_hand._joint_pos[0][joint_idx] = np.array([prev_joint.x, prev_joint.y, prev_joint.z])
+                thumb_pos.append(np.array([prev_joint.x, prev_joint.y, prev_joint.z]))
                 if bone_idx == 3:
                     next_joint = bone.next_joint
-                    target_hand._joint_pos[0][joint_idx+1] = np.array([next_joint.x, next_joint.y, next_joint.z])
+                    thumb_pos.append(np.array([next_joint.x, next_joint.y, next_joint.z]))
 
             # index, middle, ring, little
+            imrl_pos = []
             for digit_idx in range(1, 5):
                 digit = hand.digits[digit_idx]
+                joint_pos = []
                 for joint_idx, bone_idx in enumerate(range(0, 4)):
                     bone = digit.bones[bone_idx]
                     prev_joint = bone.prev_joint
-                    target_hand._joint_pos[digit_idx][joint_idx] = np.array([prev_joint.x, prev_joint.y, prev_joint.z])
+                    joint_pos.append(np.array([prev_joint.x, prev_joint.y, prev_joint.z]))
                     if bone_idx == 3:
                         next_joint = bone.next_joint
-                        target_hand._joint_pos[digit_idx][joint_idx + 1] = np.array([next_joint.x, next_joint.y, next_joint.z])
+                        joint_pos.append(np.array([next_joint.x, next_joint.y, next_joint.z]))
+                imrl_pos.append(joint_pos)
+
+            target_hand.update_states(thumb_pos, *imrl_pos)
 
         # update existance
         self.hands['left'].exist = exist['left']
@@ -158,6 +260,7 @@ class TrackingListener(leap.Listener):
         self.leap_data.update_data(event)
         self.canvas.render_hands(self.leap_data)
 
+
 class LeapTracker:
     def __init__(self) -> None:
         self._leap_data = LeapData()
@@ -195,11 +298,6 @@ class LeapTracker:
                 cv2.imshow(self._leap_canvas.name, self._leap_canvas.output_image)
                 key = cv2.waitKey(1)
 
-    def test(self):
-        test_1 = (self._leap_data.hands['left'].exist, self._leap_data.hands['right'].exist)
-        test_2 = self._leap_data.hands['left'].index_pos
-        return test_1, test_2
-
     def _str_to_leap_tracking_mode(self, tracking_mode:str) -> leap.TrackingMode:
         if tracking_mode == "Desktop":
             leap_tracking_mode = leap.TrackingMode.Desktop
@@ -211,11 +309,50 @@ class LeapTracker:
             leap_tracking_mode = leap.TrackingMode.Desktop
         return leap_tracking_mode
 
+    # user functions
+    def get_left_joints(self) -> tuple:
+
+        exist = self._leap_data.hands['left'].exist
+
+        thumb_joint  = self._leap_data.hands['left'].get_thumb_joint()
+        index_joint  = self._leap_data.hands['left'].get_index_joint()
+        middle_joint = self._leap_data.hands['left'].get_middle_joint()
+        ring_joint   = self._leap_data.hands['left'].get_ring_joint()
+        little_joint = self._leap_data.hands['left'].get_little_joint()
+
+        left_joints = (thumb_joint, index_joint, middle_joint, ring_joint, little_joint)
+
+        return exist, left_joints
+
+    def test(self) -> tuple:
+
+        exist = self._leap_data.hands['left'].exist
+
+        thumb_pos = self._leap_data.hands['left'].thumb_pos
+        index_pos = self._leap_data.hands['left'].index_pos
+        middle_pos = self._leap_data.hands['left'].middle_pos
+        ring_pos = self._leap_data.hands['left'].ring_pos
+        little_pos = self._leap_data.hands['left'].little_pos
+
+        palm_joint = np.array([thumb_pos[0], index_pos[0], middle_pos[0], ring_pos[0], little_pos[0],
+                               little_pos[1], ring_pos[1], middle_pos[1], index_pos[1]]) * 0.001
+        palm_pos = np.mean(palm_joint, axis=0) * 1000
+
+        if exist:
+            palm_norm = np.linalg.solve(palm_joint.T @ palm_joint, palm_joint.T @ np.ones([9, 1]))
+            palm_norm = palm_norm / np.linalg.norm(palm_norm)
+        else:
+            palm_norm = np.zeros(3)
+
+        return exist, thumb_pos, index_pos, middle_pos, ring_pos, little_pos, palm_pos, palm_norm
+
+
+
 
 if __name__ == "__main__":
     leap_tracker = LeapTracker()
     leap_tracker.connect('Desktop')
 
-    for i in range(10000):
-        res = leap_tracker.test()
+    for i in range(1000):
+        res = leap_tracker.get_left_joints()
         time.sleep(0.1)

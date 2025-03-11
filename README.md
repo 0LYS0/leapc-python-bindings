@@ -25,6 +25,13 @@ To use this plugin you will need the following:
 2. An Ultraleap Hand Tracking Camera - follow setup process [here][developer-site-setup-camera].
 3. Follow one of the Installation workflows listed below.
 
+## Usage in Python 3.10 (Windows 10/11)
+C:\Program Files\Ultraleap\LeapSDK\leapc_cffi
+
+-> copy _leapc_cffi.cp38-win_amd64
+
+-> rename to _leapc_cffi.cp310-win_amd64
+
 ## Installation:
 
 This module makes use of a compiled module called `leapc_cffi`. We include some pre-compiled python objects with our
@@ -58,7 +65,7 @@ By default, this path is the following for each operating system:
 
 The included pre-compiled modules within our 5.17 release currently only support the following versions of python:
 
-- Windows: Python 3.8
+- Windows: Python 3.8 + 3.10
 - Linux x64: Python 3.8
 - Darwin: Python 3.8
 - Linux ARM: Python 3.8, 3.9, 3.10, 3.11
