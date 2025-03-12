@@ -45,6 +45,10 @@ pip install -e leapc-python-api
 python examples/tracking_event_example.py
 ```
 
+```
+conda install conda-forge::pinocchio
+```
+
 ### Custom Install
 
 This module assumes that you have the Leap SDK installed in the default location. If this is not the case

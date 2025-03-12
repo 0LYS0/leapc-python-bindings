@@ -324,27 +324,26 @@ class LeapTracker:
 
         return exist, left_joints
 
-    def test(self) -> tuple:
+    def get_left_tips_pos(self) -> tuple:
 
         exist = self._leap_data.hands['left'].exist
 
-        thumb_pos = self._leap_data.hands['left'].thumb_pos
-        index_pos = self._leap_data.hands['left'].index_pos
-        middle_pos = self._leap_data.hands['left'].middle_pos
-        ring_pos = self._leap_data.hands['left'].ring_pos
-        little_pos = self._leap_data.hands['left'].little_pos
+        thumb_pos = self._leap_data.hands['left'].thumb_pos[-1].reshape(1, -1)
+        index_pos = self._leap_data.hands['left'].index_pos[-1].reshape(1, -1)
+        middle_pos = self._leap_data.hands['left'].middle_pos[-1].reshape(1, -1)
+        ring_pos = self._leap_data.hands['left'].ring_pos[-1].reshape(1, -1)
+        little_pos = self._leap_data.hands['left'].little_pos[-1].reshape(1, -1)
 
-        palm_joint = np.array([thumb_pos[0], index_pos[0], middle_pos[0], ring_pos[0], little_pos[0],
-                               little_pos[1], ring_pos[1], middle_pos[1], index_pos[1]]) * 0.001
-        palm_pos = np.mean(palm_joint, axis=0) * 1000
+        wrist_pos = np.mean(np.array([
+            self._leap_data.hands['left'].index_pos[0],
+            self._leap_data.hands['left'].little_pos[0],
+            self._leap_data.hands['left'].index_pos[1],
+            self._leap_data.hands['left'].little_pos[1],
+        ]), axis=0)
 
-        if exist:
-            palm_norm = np.linalg.solve(palm_joint.T @ palm_joint, palm_joint.T @ np.ones([9, 1]))
-            palm_norm = palm_norm / np.linalg.norm(palm_norm)
-        else:
-            palm_norm = np.zeros(3)
+        tips_pos = np.vstack((thumb_pos, index_pos, middle_pos, ring_pos, little_pos)) - wrist_pos
 
-        return exist, thumb_pos, index_pos, middle_pos, ring_pos, little_pos, palm_pos, palm_norm
+        return exist, tips_pos
 
 
 
