@@ -48,8 +48,18 @@ class ShadowHand:
 
         # self.q_l = np.array([-30, -40, -60, 0, -12, -40, 0, -20, 0, 0, 0, -20, 0, 0, 0, -20, 0, 0, 0, 0, -20, 0, 0, 0]) * np.pi/180
         # self.q_u = np.array([10, 28, 60, 70, 12, 40, 90, 20, 90, 90, 90, 20, 90, 90, 90, 20, 90, 90, 90, 45, 20, 90, 90, 90]) * np.pi/180
-        self.q_l = np.array([-0, -0, -60, 0, -12, -10, 0, -0, 0, 0, 0, -0, 0, 0, 0, -0, 0, 0, 0, 0, -0, 0, 0, 0]) * np.pi / 180
-        self.q_u = np.array([0, 0, 60, 70, 12, 40, 90, 0, 90, 90, 90, 0, 90, 90, 90, 0, 90, 90, 90, 0, 0, 90, 90, 90]) * np.pi/180
+        self.q_l = np.array([-0, -0,
+                             -60, 0, -12, -10, 0,
+                             -20, 0, 0, 0,
+                             -5, 0, 0, 0,
+                             -20, 0, 0, 0,
+                             0, -0, 0, 0, 0]) * np.pi / 180
+        self.q_u = np.array([ 0, 0,
+                              60, 70, 12, 40, 90,
+                              0, 90, 90, 90,
+                              5, 90, 90, 90,
+                              0, 90, 90, 90,
+                              45, 20, 90, 90, 90]) * np.pi/180
 
         self._T_W0 = np.identity(4)
         self._T_EEs = [
@@ -122,19 +132,19 @@ class ShadowHand:
 
         q = q*s
 
-        # control_kwargs = {'positionGain': 1, 'velocityGain': 1}
+        control_kwargs = {'positionGain': 0.5, 'velocityGain': 0.5}
         for i in range(2):
-            p.setJointMotorControl2(self._handId, self.joints_idx[0][i], p.POSITION_CONTROL, q[self.joints_idx[0][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[0][i], p.POSITION_CONTROL, q[self.joints_idx[0][i]], **control_kwargs)
         for i in range(5):
-            p.setJointMotorControl2(self._handId, self.joints_idx[1][i], p.POSITION_CONTROL, q[self.joints_idx[1][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[1][i], p.POSITION_CONTROL, q[self.joints_idx[1][i]], **control_kwargs)
         for i in range(4):
-            p.setJointMotorControl2(self._handId, self.joints_idx[2][i], p.POSITION_CONTROL, q[self.joints_idx[2][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[2][i], p.POSITION_CONTROL, q[self.joints_idx[2][i]], **control_kwargs)
         for i in range(4):
-            p.setJointMotorControl2(self._handId, self.joints_idx[3][i], p.POSITION_CONTROL, q[self.joints_idx[3][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[3][i], p.POSITION_CONTROL, q[self.joints_idx[3][i]], **control_kwargs)
         for i in range(4):
-            p.setJointMotorControl2(self._handId, self.joints_idx[4][i], p.POSITION_CONTROL, q[self.joints_idx[4][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[4][i], p.POSITION_CONTROL, q[self.joints_idx[4][i]], **control_kwargs)
         for i in range(5):
-            p.setJointMotorControl2(self._handId, self.joints_idx[5][i], p.POSITION_CONTROL, q[self.joints_idx[5][i]])
+            p.setJointMotorControl2(self._handId, self.joints_idx[5][i], p.POSITION_CONTROL, q[self.joints_idx[5][i]], **control_kwargs)
 
     # Debug Frame
     def add_debug_frames(self, Tlist, frame_buff_list=None):
@@ -215,135 +225,181 @@ def my_func(x, p_h):
     p_h5 = p_h[4]
 
     #
-    l_r01 = np.linalg.norm(p_r1)
-    l_r02 = np.linalg.norm(p_r2)
-    l_r03 = np.linalg.norm(p_r3)
-    l_r04 = np.linalg.norm(p_r4)
-    l_r05 = np.linalg.norm(p_r5)
+    d_r01 = np.linalg.norm(p_r1)
+    d_r02 = np.linalg.norm(p_r2)
+    d_r03 = np.linalg.norm(p_r3)
+    d_r04 = np.linalg.norm(p_r4)
+    d_r05 = np.linalg.norm(p_r5)
 
-    l_r12 = np.abs(np.linalg.norm(p_r1 - p_r2))
-    l_r13 = np.abs(np.linalg.norm(p_r1 - p_r3))
-    l_r14 = np.abs(np.linalg.norm(p_r1 - p_r4))
-    l_r15 = np.abs(np.linalg.norm(p_r1 - p_r5))
-    l_r23 = np.abs(np.linalg.norm(p_r2 - p_r3))
-    l_r24 = np.abs(np.linalg.norm(p_r2 - p_r4))
-    l_r25 = np.abs(np.linalg.norm(p_r2 - p_r5))
-    l_r34 = np.abs(np.linalg.norm(p_r3 - p_r4))
-    l_r35 = np.abs(np.linalg.norm(p_r3 - p_r5))
-    l_r45 = np.abs(np.linalg.norm(p_r4 - p_r5))
+    r_r12 = p_r1 - p_r2
+    r_r13 = p_r1 - p_r3
+    r_r14 = p_r1 - p_r4
+    r_r15 = p_r1 - p_r5
+    r_r23 = p_r2 - p_r3
+    r_r24 = p_r2 - p_r4
+    r_r25 = p_r2 - p_r5
+    r_r34 = p_r3 - p_r4
+    r_r35 = p_r3 - p_r5
+    r_r45 = p_r4 - p_r5
 
-    l_h01 = np.linalg.norm(p_h1) - 0.08
-    l_h02 = np.linalg.norm(p_h2) - 0.08
-    l_h03 = np.linalg.norm(p_h3) - 0.08
-    l_h04 = np.linalg.norm(p_h4) - 0.06
-    l_h05 = np.linalg.norm(p_h5) - 0.04
+    d_h01 = np.linalg.norm(p_h1)
+    d_h02 = np.linalg.norm(p_h2)
+    d_h03 = np.linalg.norm(p_h3)
+    d_h04 = np.linalg.norm(p_h4)
+    d_h05 = np.linalg.norm(p_h5)
 
-    l_h12 = np.abs(np.linalg.norm(p_h1 - p_h2)) * 0.6
-    l_h13 = np.abs(np.linalg.norm(p_h1 - p_h3)) * 0.6
-    l_h14 = np.abs(np.linalg.norm(p_h1 - p_h4)) * 0.6
-    l_h15 = np.abs(np.linalg.norm(p_h1 - p_h5)) * 0.6
-    l_h23 = np.abs(np.linalg.norm(p_h2 - p_h3)) * 0.6
-    l_h24 = np.abs(np.linalg.norm(p_h2 - p_h4)) * 0.6
-    l_h25 = np.abs(np.linalg.norm(p_h2 - p_h5)) * 0.6
-    l_h34 = np.abs(np.linalg.norm(p_h3 - p_h4)) * 0.6
-    l_h35 = np.abs(np.linalg.norm(p_h3 - p_h5)) * 0.6
-    l_h45 = np.abs(np.linalg.norm(p_h4 - p_h5)) * 0.6
+    r_h12 = p_h1 - p_h2
+    r_h13 = p_h1 - p_h3
+    r_h14 = p_h1 - p_h4
+    r_h15 = p_h1 - p_h5
+    r_h23 = p_h2 - p_h3
+    r_h24 = p_h2 - p_h4
+    r_h25 = p_h2 - p_h5
+    r_h34 = p_h3 - p_h4
+    r_h35 = p_h3 - p_h5
+    r_h45 = p_h4 - p_h5
 
-    if l_h01 < 0.01:
+    d_h12 = np.linalg.norm(r_h12)
+    d_h13 = np.linalg.norm(r_h13)
+    d_h14 = np.linalg.norm(r_h14)
+    d_h15 = np.linalg.norm(r_h15)
+    d_h23 = np.linalg.norm(r_h23)
+    d_h24 = np.linalg.norm(r_h24)
+    d_h25 = np.linalg.norm(r_h25)
+    d_h34 = np.linalg.norm(r_h34)
+    d_h35 = np.linalg.norm(r_h35)
+    d_h45 = np.linalg.norm(r_h45)
+
+    epsilon_1 = 0.01
+    eta_1 = 0.0001
+
+    if d_h01 < epsilon_1:
         s = 200
+        eta = np.linalg.norm(p_r1 - eta_1 * p_h1/d_h01)
     else:
         s = 1
-    J += s * (l_r01 - l_h01) ** 2
+        eta = np.linalg.norm(p_r1 - p_h1)
+    J += s * eta ** 2
 
-    if l_h02 < 0.01:
+    if d_h02 < epsilon_1:
         s = 200
+        eta = np.linalg.norm(p_r2 - eta_1 * p_h2/d_h02)
     else:
         s = 1
-    J += s * (l_r02 - l_h02) ** 2
+        eta = np.linalg.norm(p_r2 - p_h2)
+    J += s * eta ** 2
 
-    if l_h03 < 0.01:
+    if d_h03 < epsilon_1:
         s = 200
+        eta = np.linalg.norm(p_r3 - eta_1 * p_h3/d_h03)
     else:
         s = 1
-    J += s * (l_r03 - l_h03) ** 2
+        eta = np.linalg.norm(p_r3 - p_h3)
+    J += s * eta ** 2
 
-    if l_h04 < 0.01:
+    if d_h04 < epsilon_1:
         s = 200
+        eta = np.linalg.norm(p_r4 - eta_1 * p_h4/d_h04)
     else:
         s = 1
-    J += s * (l_r04 - l_h04) ** 2
+        eta = np.linalg.norm(p_r4 - p_h4)
+    J += s * eta ** 2
 
-    if l_h05 < 0.01:
+    if d_h05 < epsilon_1:
         s = 200
+        eta = np.linalg.norm(p_r5 - eta_1 * p_h5/d_h05)
     else:
         s = 1
-    J += s * (l_r05 - l_h05) ** 2
+        eta = np.linalg.norm(p_r5 - p_h5)
+    J += s * eta ** 2
 
 
-    if l_h12 < 0.04:
+    epsilon_2 = 0.046
+    eta_2 = 0.02
+    if d_h12 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r12 - eta_2 * r_h12/d_h12)
     else:
         s = 1
-    J += s * (l_r12 - l_h12) ** 2
+        eta = np.linalg.norm(r_r12 - r_h12)
+    J += s * eta ** 2
 
-    if l_h13 < 0.04:
+    if d_h13 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r13 - eta_2 * r_h13/d_h13)
     else:
         s = 1
-    J += s * (l_r13 - l_h13) ** 2
+        eta = np.linalg.norm(r_r13 - r_h13)
+    J += s * eta ** 2
 
-    if l_h14 < 0.04:
+    if d_h14 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r14 - eta_2 * r_h14/d_h14)
     else:
         s = 1
-    J += s * (l_r14 - l_h14) ** 2
+        eta = np.linalg.norm(r_r14 - r_h14)
+    J += s * eta ** 2
 
-    if l_h15 < 0.04:
+    if d_h15 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r15 - eta_2 * r_h15/d_h15)
     else:
         s = 1
-    J += s * (l_r15 - l_h15) ** 2
+        eta = np.linalg.norm(r_r15 - r_h15)
+    J += s * eta ** 2
 
-    if l_h23 < 0.04:
+    if d_h23 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r23 - eta_2 * r_h23/d_h23)
     else:
         s = 1
-    J += s * (l_r23 - l_h23) ** 2
+        eta = np.linalg.norm(r_r23 - r_h23)
+    J += s * eta ** 2
 
-    if l_h24 < 0.04:
+    if d_h24 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r24 - eta_2 * r_h24/d_h24)
     else:
         s = 1
-    J += s * (l_r24 - l_h24) ** 2
+        eta = np.linalg.norm(r_r24 - r_h24)
+    J += s * eta ** 2
 
-    if l_h25 < 0.04:
+    if d_h25 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r25 - eta_2 * r_h25/d_h25)
     else:
         s = 1
-    J += s * (l_r25 - l_h25) ** 2
+        eta = np.linalg.norm(r_r25 - r_h25)
+    J += s * eta ** 2
 
-    if l_h34 < 0.04:
+    if d_h34 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r34 - eta_2 * r_h34/d_h34)
     else:
         s = 1
-    J += s * (l_r34 - l_h34) ** 2
+        eta = np.linalg.norm(r_r34 - r_h34)
+    J += s * eta ** 2
 
-    if l_h35 < 0.04:
+    if d_h35 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r35 - eta_2 * r_h35/d_h35)
     else:
         s = 1
-    J += s * (l_r35 - l_h35) ** 2
+        eta = np.linalg.norm(r_r35 - r_h35)
+    J += s * eta ** 2
 
-    if l_h45 < 0.04:
+    if d_h45 < epsilon_2:
         s = 400
+        eta = np.linalg.norm(r_r45 - eta_2 * r_h45/d_h45)
     else:
         s = 1
-    J += s * (l_r45 - l_h45) ** 2
+        eta = np.linalg.norm(r_r45 - r_h45)
+    J += s * eta ** 2
 
     return J
 
 if __name__ == "__main__":
-    CliendId = p.connect(p.GUI)
+    ClientId = p.connect(p.GUI)
 
     p.setTimeStep(1./240)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
@@ -352,8 +408,17 @@ if __name__ == "__main__":
     p.configureDebugVisualizer(p.COV_ENABLE_DEPTH_BUFFER_PREVIEW, 0)
     p.configureDebugVisualizer(p.COV_ENABLE_SEGMENTATION_MARK_PREVIEW, 0)
 
-    p.resetDebugVisualizerCamera(cameraDistance=0.4, cameraYaw=15, cameraPitch=-30, cameraTargetPosition=[0.0, 0.0, 0.2])
-    shadow_hand = ShadowHand(CliendId)
+    # Add world coordinates frame
+    p.addUserDebugLine(lineFromXYZ=[0, 0, 0], lineToXYZ=[0.3, 0, 0], lineColorRGB=[1, 0, 0],
+                       lineWidth=5, physicsClientId=ClientId)
+    p.addUserDebugLine(lineFromXYZ=[0, 0, 0], lineToXYZ=[0, 0.3, 0], lineColorRGB=[0, 1, 0],
+                       lineWidth=5, physicsClientId=ClientId)
+    p.addUserDebugLine(lineFromXYZ=[0, 0, 0], lineToXYZ=[0, 0, 0.3], lineColorRGB=[0, 0, 1],
+                       lineWidth=5, physicsClientId=ClientId)
+
+    # reset camera configuration
+    p.resetDebugVisualizerCamera(cameraDistance=0.4, cameraYaw=45, cameraPitch=-30, cameraTargetPosition=[0.0, 0.0, 0.2])
+    shadow_hand = ShadowHand(ClientId)
 
     leap_tracker = LeapTracker()
     leap_tracker.connect('Desktop')
@@ -369,11 +434,22 @@ if __name__ == "__main__":
     x_bound = sp.optimize.Bounds(shadow_hand.q_l, shadow_hand.q_u, keep_feasible=True)
 
     p_palm = shadow_hand._palm_center_SE3[0:3, 3]
-
+    T_palm = shadow_hand._palm_center_SE3
+    beta = [1.0, 1.2, 1.2, 1.3, 1.7]
     while True:
-        exist, left_tips_pos = leap_tracker.get_left_tips_pos()
+        exist, right_tips_pos = leap_tracker.get_right_tips_pos()
+
         if exist:
-            p_h = left_tips_pos / 4000.0
+            T_right_tips = []
+            p_h = []
+            for i in range(5):
+                right_tip_pos = right_tips_pos[i] * beta[i]
+                T_right_tip_pos = T_palm @ np.block([[np.identity(3), right_tip_pos.reshape(-1, 1) * 0.0014], [np.zeros([1, 3]), 1]])
+                T_right_tips.append(T_right_tip_pos)
+                p_h.append(T_right_tip_pos[0:3, 3] - p_palm)
+            shadow_hand.add_debug_frames(T_right_tips + [T_palm])
+
+            p_h = np.array(p_h)
 
             # print("*********************************************************")
             # print(l_r12, l_h12)

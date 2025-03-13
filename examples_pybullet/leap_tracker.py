@@ -119,23 +119,23 @@ class LeapHand:
 
     @property
     def thumb_pos(self) -> np.ndarray:
-        return np.array(self._thumb_pos) * 10 # cm -> mm
+        return np.array(self._thumb_pos)
 
     @property
     def index_pos(self) -> np.ndarray:
-        return np.array(self._index_pos) * 10
+        return np.array(self._index_pos)
 
     @property
     def middle_pos(self) -> np.ndarray:
-        return np.array(self._middle_pos) * 10
+        return np.array(self._middle_pos)
 
     @property
     def ring_pos(self) -> np.ndarray:
-        return np.array(self._ring_pos) * 10
+        return np.array(self._ring_pos)
 
     @property
     def little_pos(self) -> np.ndarray:
-        return np.array(self._little_pos) * 10
+        return np.array(self._little_pos)
 
 
 class LeapData:
@@ -219,19 +219,19 @@ class LeapCanvas:
         self.output_image[:, :] = 0
         for hand_type in ['left', 'right']:
             if leap_data.hands[hand_type].exist:
-                digit = leap_data.hands[hand_type].thumb_pos / 10
+                digit = leap_data.hands[hand_type].thumb_pos
                 for joint_idx in range(len(digit)):
                     cv2.circle(self.output_image, self.get_joint_position(digit[joint_idx]), 2, self.hands_colour, -1)
-                digit = leap_data.hands[hand_type].index_pos / 10
+                digit = leap_data.hands[hand_type].index_pos
                 for joint_idx in range(len(digit)):
                     cv2.circle(self.output_image, self.get_joint_position(digit[joint_idx]), 2, self.hands_colour, -1)
-                digit = leap_data.hands[hand_type].middle_pos / 10
+                digit = leap_data.hands[hand_type].middle_pos
                 for joint_idx in range(len(digit)):
                     cv2.circle(self.output_image, self.get_joint_position(digit[joint_idx]), 2, self.hands_colour, -1)
-                digit = leap_data.hands[hand_type].ring_pos / 10
+                digit = leap_data.hands[hand_type].ring_pos
                 for joint_idx in range(len(digit)):
                     cv2.circle(self.output_image, self.get_joint_position(digit[joint_idx]), 2, self.hands_colour, -1)
-                digit = leap_data.hands[hand_type].little_pos / 10
+                digit = leap_data.hands[hand_type].little_pos
                 for joint_idx in range(len(digit)):
                     cv2.circle(self.output_image, self.get_joint_position(digit[joint_idx]), 2, self.hands_colour, -1)
 
@@ -324,28 +324,34 @@ class LeapTracker:
 
         return exist, left_joints
 
-    def get_left_tips_pos(self) -> tuple:
+    def get_right_tips_pos(self) -> tuple:
 
-        exist = self._leap_data.hands['left'].exist
+        exist = self._leap_data.hands['right'].exist
 
-        thumb_pos = self._leap_data.hands['left'].thumb_pos[-1].reshape(1, -1)
-        index_pos = self._leap_data.hands['left'].index_pos[-1].reshape(1, -1)
-        middle_pos = self._leap_data.hands['left'].middle_pos[-1].reshape(1, -1)
-        ring_pos = self._leap_data.hands['left'].ring_pos[-1].reshape(1, -1)
-        little_pos = self._leap_data.hands['left'].little_pos[-1].reshape(1, -1)
+        thumb_pos = self._leap_data.hands['right'].thumb_pos[-1].reshape(1, -1)
+        index_pos = self._leap_data.hands['right'].index_pos[-1].reshape(1, -1)
+        middle_pos = self._leap_data.hands['right'].middle_pos[-1].reshape(1, -1)
+        ring_pos = self._leap_data.hands['right'].ring_pos[-1].reshape(1, -1)
+        little_pos = self._leap_data.hands['right'].little_pos[-1].reshape(1, -1)
 
-        wrist_pos = np.mean(np.array([
-            self._leap_data.hands['left'].index_pos[0],
-            self._leap_data.hands['left'].little_pos[0],
-            self._leap_data.hands['left'].index_pos[1],
-            self._leap_data.hands['left'].little_pos[1],
+        palm_pos = np.mean(np.array([
+            self._leap_data.hands['right'].middle_pos[0],
+            self._leap_data.hands['right'].little_pos[0],
+            self._leap_data.hands['right'].middle_pos[1],
+            self._leap_data.hands['right'].little_pos[1],
         ]), axis=0)
 
-        tips_pos = np.vstack((thumb_pos, index_pos, middle_pos, ring_pos, little_pos)) - wrist_pos
+        wrist_Rx = self._leap_data.hands['right'].index_pos[0] - self._leap_data.hands['right'].little_pos[0]
+        wrist_Rx = wrist_Rx/np.linalg.norm(wrist_Rx)
+        wrist_Rz = np.cross(wrist_Rx, self._leap_data.hands['right'].middle_pos[1] - palm_pos)
+        wrist_Rz = wrist_Rz/np.linalg.norm(wrist_Rz)
+        wrist_Ry = np.cross(wrist_Rz, wrist_Rx)
+
+        wrist_R = np.hstack((wrist_Rx[:, np.newaxis], wrist_Ry[:, np.newaxis], wrist_Rz[:, np.newaxis]))
+
+        tips_pos = (np.vstack((thumb_pos, index_pos, middle_pos, ring_pos, little_pos)) - palm_pos) @ wrist_R + np.array([0, 0, 0.01])*0
 
         return exist, tips_pos
-
-
 
 
 if __name__ == "__main__":
