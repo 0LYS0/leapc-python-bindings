@@ -25,6 +25,17 @@ To use this plugin you will need the following:
 2. An Ultraleap Hand Tracking Camera - follow setup process [here][developer-site-setup-camera].
 3. Follow one of the Installation workflows listed below.
 
+## Usage in Python 3.10
+### For Windows 10/11
+1. Go to C:\Program Files\Ultraleap\LeapSDK\leapc_cffi
+1. Copy _leapc_cffi.cp38-win_amd64
+2. Rename to _leapc_cffi.cp310-win_amd64
+
+### For Ubuntu 22.04
+1. Go to /usr/lib/ultraleap-hand-tracking-service/leapc_cffi
+1. Copy _leapc_cffi.cpython-38-x86_64-linux-gnu.so
+2. Rename to _leapc_cffi.cpython-310-x86_64-linux-gnu.so
+
 ## Installation:
 
 This module makes use of a compiled module called `leapc_cffi`. We include some pre-compiled python objects with our
@@ -36,6 +47,10 @@ have the matching python version and have installed Gemini into the default loca
 pip install -r requirements.txt
 pip install -e leapc-python-api
 python examples/tracking_event_example.py
+```
+
+```
+conda install conda-forge::pinocchio
 ```
 
 ### Custom Install
@@ -58,7 +73,7 @@ By default, this path is the following for each operating system:
 
 The included pre-compiled modules within our 5.17 release currently only support the following versions of python:
 
-- Windows: Python 3.8
+- Windows: Python 3.8 + 3.10
 - Linux x64: Python 3.8
 - Darwin: Python 3.8
 - Linux ARM: Python 3.8, 3.9, 3.10, 3.11

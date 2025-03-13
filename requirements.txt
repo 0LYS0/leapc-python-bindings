@@ -1,4 +1,8 @@
+numpy==1.26.4
+pybullet==3.2.6
+scipy
+
 build
 cffi
 opencv-python
-numpy
+

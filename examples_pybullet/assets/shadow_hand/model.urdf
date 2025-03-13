@@ -13,7 +13,7 @@
                 <mesh filename="package://meshes/visual/forearm.dae"/>
             </geometry>
             <material name="shadow_black">
-    		    <color rgba="0.3. 0.3. 0.3. 1."/>
+    		    <color rgba="0.3 0.3 0.3 1."/>
   		    </material>
         </visual>
         <collision>
@@ -24,6 +24,11 @@
     </link>
 
     <link name="wrist">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="wrist_visual">
                 <mesh filename="package://meshes/visual/wrist.dae"/>
@@ -38,6 +43,11 @@
     </link>
 
     <link name="palm">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="palm_visual">
                 <mesh filename="package://meshes/visual/palm.dae"/>
@@ -74,6 +84,11 @@
     <link name="thumb_base"/>
 
     <link name="thumb_proximal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="thumb_proximal_visual">
                 <mesh filename="package://meshes/visual/thumb_proximal.dae"/>
@@ -89,6 +104,11 @@
     <link name="thumb_hub"/>
 
     <link name="thumb_middle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="thumb_middle_visual">
                 <mesh filename="package://meshes/visual/thumb_middle.dae"/>
@@ -102,6 +122,11 @@
     </link>
 
     <link name="thumb_distal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="thumb_distal_visual">
                 <mesh filename="package://meshes/visual/thumb_distal.dae"/>
@@ -157,6 +182,11 @@
 
     <!-- Index Finger Links -->
     <link name="index_finger_knuckle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0.0005"/>
             <geometry name="index_finger_knuckle_visual">
@@ -172,6 +202,11 @@
     </link>
 
     <link name="index_finger_proximal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="index_finger_proximal_visual">
                 <mesh filename="package://meshes/visual/finger_proximal.dae"/>
@@ -185,6 +220,11 @@
     </link>
 
     <link name="index_finger_middle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="index_finger_middle_visual">
                 <mesh filename="package://meshes/visual/finger_middle.dae"/>
@@ -198,6 +238,11 @@
     </link>
 
     <link name="index_finger_distal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="index_finger_distal_visual">
                 <mesh filename="package://meshes/visual/finger_distal.dae"/>
@@ -246,6 +291,11 @@
 
     <!-- Middle Finger Links -->
     <link name="middle_finger_knuckle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0.0005"/>
             <geometry name="middle_finger_knuckle_visual">
@@ -261,6 +311,11 @@
     </link>
 
     <link name="middle_finger_proximal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="middle_finger_proximal_visual">
                 <mesh filename="package://meshes/visual/finger_proximal.dae"/>
@@ -274,6 +329,11 @@
     </link>
 
     <link name="middle_finger_middle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="middle_finger_middle_visual">
                 <mesh filename="package://meshes/visual/finger_middle.dae"/>
@@ -287,6 +347,11 @@
     </link>
 
     <link name="middle_finger_distal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="middle_finger_distal_visual">
                 <mesh filename="package://meshes/visual/finger_distal.dae"/>
@@ -335,6 +400,11 @@
 
     <!-- Ring Finger Links -->
     <link name="ring_finger_knuckle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0.0005"/>
             <geometry name="ring_finger_knuckle_visual">
@@ -350,6 +420,11 @@
     </link>
 
     <link name="ring_finger_proximal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="ring_finger_proximal_visual">
                 <mesh filename="package://meshes/visual/finger_proximal.dae"/>
@@ -363,6 +438,11 @@
     </link>
 
     <link name="ring_finger_middle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="ring_finger_middle_visual">
                 <mesh filename="package://meshes/visual/finger_middle.dae"/>
@@ -376,6 +456,11 @@
     </link>
 
     <link name="ring_finger_distal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="ring_finger_distal_visual">
                 <mesh filename="package://meshes/visual/finger_distal.dae"/>
@@ -424,6 +509,11 @@
 
     <!-- Little Finger Links -->
     <link name="little_finger_metacarpal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="little_finger_metacarpal_visual">
                 <mesh filename="package://meshes/visual/metacarpal.dae"/>
@@ -437,6 +527,11 @@
     </link>
 
     <link name="little_finger_knuckle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0.0005"/>
             <geometry name="little_finger_knuckle_visual">
@@ -452,6 +547,11 @@
     </link>
 
     <link name="little_finger_proximal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="little_finger_proximal_visual">
                 <mesh filename="package://meshes/visual/finger_proximal.dae"/>
@@ -465,6 +565,11 @@
     </link>
 
     <link name="little_finger_middle">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="little_finger_middle_visual">
                 <mesh filename="package://meshes/visual/finger_middle.dae"/>
@@ -478,6 +583,11 @@
     </link>
 
     <link name="little_finger_distal">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.01" ixy="0.01" ixz="0.01" iyy="0.01" iyz="0.01" izz="0.01"/>
+        </inertial>
         <visual>
             <geometry name="little_finger_distal_visual">
                 <mesh filename="package://meshes/visual/finger_distal.dae"/>
