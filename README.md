@@ -25,12 +25,16 @@ To use this plugin you will need the following:
 2. An Ultraleap Hand Tracking Camera - follow setup process [here][developer-site-setup-camera].
 3. Follow one of the Installation workflows listed below.
 
-## Usage in Python 3.10 (Windows 10/11)
-C:\Program Files\Ultraleap\LeapSDK\leapc_cffi
+## Usage in Python 3.10
+### For Windows 10/11
+1. Go to C:\Program Files\Ultraleap\LeapSDK\leapc_cffi
+1. Copy _leapc_cffi.cp38-win_amd64
+2. Rename to _leapc_cffi.cp310-win_amd64
 
--> copy _leapc_cffi.cp38-win_amd64
-
--> rename to _leapc_cffi.cp310-win_amd64
+### For Ubuntu 22.04
+1. Go to /usr/lib/ultraleap-hand-tracking-service/leapc_cffi
+1. Copy _leapc_cffi.cpython-38-x86_64-linux-gnu.so
+2. Rename to _leapc_cffi.cpython-310-x86_64-linux-gnu.so
 
 ## Installation:
 

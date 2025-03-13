@@ -212,8 +212,8 @@ def my_func(x, p_h):
     T_list = shadow_hand.FK(x[0:24])
     p_palm = shadow_hand._palm_center_SE3[0:3, 3]
 
-    # gamma = 0.05
-    # J += gamma * np.linalg.norm(x)
+    gamma = 0.01
+    J += gamma * np.linalg.norm(x)
 
     p_r1 = T_list[0][0:3, 3] - p_palm
     p_r2 = T_list[1][0:3, 3] - p_palm
