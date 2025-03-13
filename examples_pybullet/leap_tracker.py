@@ -353,6 +353,33 @@ class LeapTracker:
 
         return exist, tips_pos
 
+    def get_right_palm_SE3(self) -> tuple:
+
+        exist = self._leap_data.hands['right'].exist
+
+        thumb_pos = self._leap_data.hands['right'].thumb_pos[-1].reshape(1, -1)
+        index_pos = self._leap_data.hands['right'].index_pos[-1].reshape(1, -1)
+        middle_pos = self._leap_data.hands['right'].middle_pos[-1].reshape(1, -1)
+        ring_pos = self._leap_data.hands['right'].ring_pos[-1].reshape(1, -1)
+        little_pos = self._leap_data.hands['right'].little_pos[-1].reshape(1, -1)
+
+        palm_pos = np.mean(np.array([
+            self._leap_data.hands['right'].middle_pos[0],
+            self._leap_data.hands['right'].little_pos[0],
+            self._leap_data.hands['right'].middle_pos[1],
+            self._leap_data.hands['right'].little_pos[1],
+        ]), axis=0)
+
+        wrist_Rx = self._leap_data.hands['right'].index_pos[0] - self._leap_data.hands['right'].little_pos[0]
+        wrist_Rx = wrist_Rx/np.linalg.norm(wrist_Rx)
+        wrist_Rz = np.cross(wrist_Rx, self._leap_data.hands['right'].middle_pos[1] - palm_pos)
+        wrist_Rz = wrist_Rz/np.linalg.norm(wrist_Rz)
+        wrist_Ry = np.cross(wrist_Rz, wrist_Rx)
+
+        wrist_R = np.hstack((wrist_Rx[:, np.newaxis], wrist_Ry[:, np.newaxis], wrist_Rz[:, np.newaxis]))
+
+        return exist, np.block([[wrist_R, palm_pos.reshape(-1, 1)], [np.zeros([1, 3]), 1]])
+
 
 if __name__ == "__main__":
     leap_tracker = LeapTracker()

@@ -53,13 +53,13 @@ class ShadowHand:
                              -20, 0, 0, 0,
                              -5, 0, 0, 0,
                              -20, 0, 0, 0,
-                             0, -0, 0, 0, 0]) * np.pi / 180
+                             0, -20, 0, 0, 0]) * np.pi / 180
         self.q_u = np.array([ 0, 0,
                               60, 70, 12, 40, 90,
                               0, 90, 90, 90,
                               5, 90, 90, 90,
                               0, 90, 90, 90,
-                              45, 20, 90, 90, 90]) * np.pi/180
+                              45, 0, 90, 90, 90]) * np.pi/180
 
         self._T_W0 = np.identity(4)
         self._T_EEs = [
@@ -211,6 +211,9 @@ def my_func(x, p_h):
 
     T_list = shadow_hand.FK(x[0:24])
     p_palm = shadow_hand._palm_center_SE3[0:3, 3]
+
+    # gamma = 0.05
+    # J += gamma * np.linalg.norm(x)
 
     p_r1 = T_list[0][0:3, 3] - p_palm
     p_r2 = T_list[1][0:3, 3] - p_palm
