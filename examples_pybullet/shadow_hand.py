@@ -102,7 +102,7 @@ class ShadowHand:
 
         T_list = self.FK(q * s)
 
-        self.add_debug_frames(T_list, self._fingertip_frame_buff_list)
+        # self.add_debug_frames(T_list, self._fingertip_frame_buff_list)
 
         self.T_list = T_list
 
@@ -450,7 +450,7 @@ if __name__ == "__main__":
                 T_right_tip_pos = T_palm @ np.block([[np.identity(3), right_tip_pos.reshape(-1, 1) * 0.0014], [np.zeros([1, 3]), 1]])
                 T_right_tips.append(T_right_tip_pos)
                 p_h.append(T_right_tip_pos[0:3, 3] - p_palm)
-            shadow_hand.add_debug_frames(T_right_tips + [T_palm])
+            # shadow_hand.add_debug_frames(T_right_tips + [T_palm])
 
             p_h = np.array(p_h)
 
