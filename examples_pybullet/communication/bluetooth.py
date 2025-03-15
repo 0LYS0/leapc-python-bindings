@@ -10,7 +10,16 @@ class ESP32:
         self.write_char_uuid = WRITE_CHAR_UUID
         self.client = None
 
-    async def connect(self):
+    def connect(self):
+        asyncio.run(self.async_connect())
+
+    def send_command(self, command=str):
+        asyncio.run(self.async_send_command(command))
+
+    def disconnect(self):
+        asyncio.run(self.async_disconnect())
+
+    async def async_connect(self):
         self.device = None
         timeout = 5
         while self.device is None:
@@ -33,11 +42,11 @@ class ESP32:
             print("Faild to connect")
             raise ConnectionError
 
-    async def disconnect(self):
+    async def async_disconnect(self):
         await self.client.disconnect()
         print(f"Disconnected to {self.device.name}")
 
-    async def send_command(self, command=str):
+    async def async_send_command(self, command=str):
         """
         command = "200,200,200,200,200"
         0~255 value
