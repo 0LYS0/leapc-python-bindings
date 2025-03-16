@@ -13,10 +13,15 @@ from utils.Toolbox import *
 
 from leap_tracker import LeapTracker
 
+from communication.bluetooth import ESP32
+
 if __name__ == "__main__":
 
     leap_tracker = LeapTracker()
     leap_tracker.connect('Desktop')
+
+    esp32 = ESP32()
+    esp32.connect()
 
     while True:
         exist, right_tips_pos = leap_tracker.get_right_tips_pos()
@@ -37,6 +42,10 @@ if __name__ == "__main__":
             d_min = 0.07
             d_max = 0.20
             d = (np.clip(d, d_min, d_max) - d_min)/(d_max-d_min)
-            print(d)
+
+            if d < 0.3:
+                esp32.send_command("255,255,0,0,0")
+            else:
+                esp32.send_command("0,0,0,0,0")
 
         time.sleep(0.1)
