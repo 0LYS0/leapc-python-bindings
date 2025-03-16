@@ -3,11 +3,13 @@ from bleak import BleakScanner, BleakClient
 
 DEVICE_NAME = "MAR8"  # The name your ESP32 advertises
 WRITE_CHAR_UUID = "9aeec8fc-66e4-4234-90ca-df9661cdce0d"  # Replace with your actual write characteristic UUID
+BLE_UUID = "9b42be58-a06e-4c9c-a6bc-4084378b412d"
 
 class ESP32:
-    def __init__(self, device_name=DEVICE_NAME, write_char_uuid=WRITE_CHAR_UUID):
+    def __init__(self, device_name=DEVICE_NAME, write_char_uuid=WRITE_CHAR_UUID, ble_uuid=BLE_UUID):
         self.device_name = device_name
-        self.write_char_uuid = WRITE_CHAR_UUID
+        self.write_char_uuid = write_char_uuid
+        self.ble_uuid = ble_uuid
         self.client = None
 
     def connect(self):
@@ -18,6 +20,12 @@ class ESP32:
 
     def disconnect(self):
         asyncio.run(self.async_disconnect())
+
+    def request_info(self):
+        asyncio.run(self.async_request_info())
+
+    def read_data(self):
+        asyncio.run(self.async_read_data())
 
     async def async_connect(self):
         self.device = None
@@ -52,3 +60,9 @@ class ESP32:
         0~255 value
         """
         await self.client.write_gatt_char(self.write_char_uuid, command.encode("utf-8"))
+
+    async def async_request_info(self):
+        await self.client.write_gatt_char(self.write_char_uuid, "get_info".encode("utf-8"))
+
+    async def async_read_data(self):
+        return await self.client.read_gatt_char(self.write_char_uuid)
